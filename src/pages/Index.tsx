@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Layout from "@/components/Layout";
 import SolarCalculator from "@/components/SolarCalculator";
 import ReviewSlider from "@/components/ReviewSlider";
+import WhyChooseCarousel from "@/components/WhyChooseCarousel";
 import { images, services } from "@/data/siteData";
 
 const fadeUp = { initial: { opacity: 0, y: 30 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true } };
@@ -68,8 +69,8 @@ const Index = () => (
             <p className="text-foreground/70 leading-relaxed mb-6">
               We deliver reliable, affordable and high-quality solar solutions across India. Our team of certified engineers ensures every installation meets the highest standards.
             </p>
-            <Link to="/about" className="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
-              Learn More
+            <Link to="/contact" className="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+              Contact Us
             </Link>
           </motion.div>
         </div>
@@ -80,30 +81,7 @@ const Index = () => (
     <SolarCalculator />
 
     {/* Why Choose Us */}
-    <section className="py-20">
-      <div className="container mx-auto px-4">
-        <motion.h2 {...fadeUp} className="text-3xl md:text-4xl font-display font-bold text-center mb-12">Why Choose Us</motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { title: "High Quality Solar Panels", desc: "We use only top-tier solar panels with 25+ year warranty and maximum efficiency.", img: images.commercial },
-            { title: "Expert Installation", desc: "Certified technicians with years of experience in residential and commercial installations.", img: images.team },
-            { title: "Govt Subsidy Support", desc: "Complete assistance with PM Surya Ghar Yojana and state subsidy applications.", img: images.happyFamily },
-            { title: "Affordable Pricing", desc: "Competitive pricing with EMI options. Best value solar solutions in India.", img: images.hero },
-            { title: "Fast Service", desc: "Quick site survey, fast installation, and prompt after-sales support.", img: images.team },
-            { title: "AMC Support", desc: "Annual maintenance contracts to keep your solar systems running at peak performance.", img: images.commercial },
-          ].map((item, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-              className="bg-background rounded-2xl overflow-hidden shadow-card hover:shadow-elevated transition-shadow group">
-              <img src={item.img} alt={item.title} className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" width={400} height={192} />
-              <div className="p-6">
-                <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.desc}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
+    <WhyChooseCarousel />
 
     {/* Reviews */}
     <ReviewSlider />
@@ -148,6 +126,14 @@ const Index = () => (
           </div>
         </motion.div>
       </div>
+    </section>
+
+    {/* Google Map */}
+    <section className="w-full">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3597.9!2d85.13!3d25.61!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDM2JzM2LjAiTiA4NcKwMDcnNDguMCJF!5e0!3m2!1sen!2sin!4v1"
+        width="100%" height="350" style={{ border: 0 }} allowFullScreen loading="lazy" title="Smart Power Energy Location"
+      />
     </section>
   </Layout>
 );

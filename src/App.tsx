@@ -15,7 +15,6 @@ const SubsidyDetail = lazy(() => import("./pages/SubsidyDetail"));
 const AMCService = lazy(() => import("./pages/AMCService"));
 const AMCDetail = lazy(() => import("./pages/AMCDetail"));
 const Contact = lazy(() => import("./pages/Contact"));
-const About = lazy(() => import("./pages/About"));
 
 const queryClient = new QueryClient();
 
@@ -41,7 +40,6 @@ const App = () => (
             <Route path="/amc-service" element={<AMCService />} />
             <Route path="/amc-service/:slug" element={<AMCDetail />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/about" element={<About />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

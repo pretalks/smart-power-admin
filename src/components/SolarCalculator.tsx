@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { images } from "@/data/siteData";
 
 const SolarCalculator = () => {
   const [bill, setBill] = useState("");
@@ -22,24 +23,28 @@ const SolarCalculator = () => {
   };
 
   return (
-    <section className="py-20 bg-muted/50">
-      <div className="container mx-auto px-4">
+    <section className="py-20 relative overflow-hidden">
+      <div className="absolute inset-0">
+        <img src={images.solarFarmBg} alt="Solar farm background" className="w-full h-full object-cover" loading="lazy" width={1920} height={1080} />
+        <div className="absolute inset-0 backdrop-blur-sm bg-foreground/40" />
+      </div>
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-display font-bold mb-4">Calculate Your Solar Savings</h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">Find out how much you can save with solar energy</p>
+          <h2 className="text-3xl md:text-4xl font-display font-bold mb-4 text-background">Calculate Your Solar Savings</h2>
+          <p className="text-background/80 max-w-xl mx-auto">Find out how much you can save with solar energy</p>
         </motion.div>
 
-        <div className="max-w-2xl mx-auto bg-background rounded-2xl p-8 shadow-card">
+        <div className="max-w-2xl mx-auto bg-background/80 backdrop-blur-md rounded-2xl p-8 shadow-[0_0_40px_rgba(74,222,128,0.2)] border border-primary/20">
           <form onSubmit={calculate} className="flex flex-col gap-5">
             <input type="number" placeholder="Monthly Electricity Bill (₹)" required value={bill} onChange={(e) => setBill(e.target.value)}
-              className="border border-border rounded-lg px-4 py-3 text-sm bg-muted/30 focus:outline-none focus:ring-2 focus:ring-primary/30" />
-            <select className="border border-border rounded-lg px-4 py-3 text-sm bg-muted/30 focus:outline-none focus:ring-2 focus:ring-primary/30">
+              className="border border-border rounded-lg px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <select className="border border-border rounded-lg px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30">
               <option>Select Location</option>
               <option>Bihar</option><option>Uttar Pradesh</option><option>Jharkhand</option>
               <option>West Bengal</option><option>Delhi</option><option>Rajasthan</option>
               <option>Haryana</option><option>Punjab</option><option>Other</option>
             </select>
-            <select className="border border-border rounded-lg px-4 py-3 text-sm bg-muted/30 focus:outline-none focus:ring-2 focus:ring-primary/30">
+            <select className="border border-border rounded-lg px-4 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30">
               <option>Home Type</option>
               <option>Residential</option><option>Commercial</option><option>Industrial</option><option>Agricultural</option>
             </select>
@@ -56,7 +61,7 @@ const SolarCalculator = () => {
                 { label: "Monthly Savings", value: result.monthly },
                 { label: "Yearly Savings", value: result.yearly },
               ].map((r) => (
-                <div key={r.label} className="bg-secondary/50 rounded-xl p-4 text-center">
+                <div key={r.label} className="bg-background rounded-xl p-4 text-center shadow-card">
                   <p className="text-sm text-muted-foreground mb-1">{r.label}</p>
                   <p className="text-xl font-bold text-primary">{r.value}</p>
                 </div>

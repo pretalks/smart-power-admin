@@ -8,7 +8,6 @@ const navLinks = [
   { label: "Govt Subsidy", path: "/govt-subsidy" },
   { label: "AMC Service", path: "/amc-service" },
   { label: "Contact", path: "/contact" },
-  { label: "About", path: "/about" },
 ];
 
 const Header = () => {
