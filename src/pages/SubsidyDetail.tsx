@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Layout from "@/components/Layout";
-import { subsidyStates, images } from "@/data/siteData";
+import { subsidyStates } from "@/data/siteData";
 
 const SubsidyDetail = () => {
   const { slug } = useParams();
@@ -16,7 +16,7 @@ const SubsidyDetail = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <Link to="/govt-subsidy" className="text-primary text-sm font-semibold mb-6 inline-block">← Back to All States</Link>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-              <img src={images.happyFamily} alt={`Solar subsidy in ${state.name}`} className="rounded-2xl shadow-elevated w-full" loading="lazy" width={640} height={400} />
+              <img src={state.image} alt={`Solar subsidy in ${state.name}`} className="rounded-2xl shadow-elevated w-full" loading="lazy" width={640} height={400} />
               <div>
                 <h1 className="text-3xl md:text-4xl font-display font-bold mb-4">Solar Subsidy in {state.name}</h1>
                 <p className="text-foreground/70 leading-relaxed mb-6">{state.subsidy}</p>
