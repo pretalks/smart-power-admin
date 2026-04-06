@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Layout from "@/components/Layout";
-import { amcServices, images } from "@/data/siteData";
+import { amcServices } from "@/data/siteData";
 
 const AMCDetail = () => {
   const { slug } = useParams();
@@ -16,7 +16,7 @@ const AMCDetail = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <Link to="/amc-service" className="text-primary text-sm font-semibold mb-6 inline-block">← Back to AMC Services</Link>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-              <img src={images.team} alt={amc.name} className="rounded-2xl shadow-elevated w-full" loading="lazy" width={640} height={400} />
+              <img src={amc.image} alt={amc.name} className="rounded-2xl shadow-elevated w-full" loading="lazy" width={640} height={400} />
               <div>
                 <h1 className="text-3xl md:text-4xl font-display font-bold mb-6">{amc.name}</h1>
                 <p className="text-foreground/70 leading-relaxed mb-6">{amc.desc}</p>

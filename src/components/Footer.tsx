@@ -19,7 +19,6 @@ const Footer = () => (
               { label: "Govt Subsidy", path: "/govt-subsidy" },
               { label: "AMC Service", path: "/amc-service" },
               { label: "Contact", path: "/contact" },
-              { label: "About", path: "/about" },
             ].map((l) => (
               <Link key={l.path} to={l.path} className="text-sm text-background/70 hover:text-background transition-colors">
                 {l.label}
