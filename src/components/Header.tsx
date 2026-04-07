@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import logo from "@/assets/logo.png";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -34,7 +35,7 @@ const Header = () => {
     >
       <div className="container mx-auto flex items-center justify-between py-4 px-4">
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-2xl font-display font-bold text-gradient">Smart Power Energy</span>
+          <img src={logo} alt="Smart Power Energy" className="h-12 w-auto" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8">

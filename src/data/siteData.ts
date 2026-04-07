@@ -7,6 +7,7 @@ import waterHeater from "@/assets/water-heater.jpg";
 import happyFamily from "@/assets/happy-family.jpg";
 import installationKit from "@/assets/installation-kit.jpg";
 import solarFarmBg from "@/assets/solar-farm-bg.jpg";
+import solarChakkiService from "@/assets/solar-chakki-service.jpg";
 import whyExpert from "@/assets/why-expert.jpg";
 import whySubsidy from "@/assets/why-subsidy.jpg";
 import whyAffordable from "@/assets/why-affordable.jpg";
@@ -61,7 +62,7 @@ export const services = [
   { name: "Hybrid Solar", slug: "hybrid-solar", image: serviceHybrid, desc: "Best of both worlds — grid-connected with battery backup. Enjoy uninterrupted power supply with maximum savings." },
   { name: "Solar Street Light", slug: "solar-street-light", image: streetLight, desc: "Autonomous solar-powered street lighting solutions for villages, colonies, and commercial areas. Zero electricity cost." },
   { name: "Solar Water Pump", slug: "solar-water-pump", image: waterPump, desc: "Solar-powered irrigation pumps for Indian farmers. Reduce diesel costs and increase agricultural productivity." },
-  { name: "Solar Aata Chakki", slug: "solar-aata-chakki", image: whyExpert, desc: "Solar-powered flour mills for rural entrepreneurs. Start your business with zero electricity cost." },
+  { name: "Solar Aata Chakki", slug: "solar-aata-chakki", image: solarChakkiService, desc: "Solar-powered flour mills for rural entrepreneurs. Start your business with zero electricity cost." },
   { name: "Solar Water Heater", slug: "solar-water-heater", image: waterHeater, desc: "Energy-efficient solar water heating systems for homes, hotels, and hospitals. Save up to 80% on water heating costs." },
   { name: "Solar Installation", slug: "solar-installation", image: whyFast, desc: "Professional solar panel installation services by certified technicians. Quality assured with warranty support." },
   { name: "Solar AMC Service", slug: "solar-amc-service", image: whyAmc, desc: "Annual Maintenance Contracts to keep your solar systems running at peak performance year-round." },

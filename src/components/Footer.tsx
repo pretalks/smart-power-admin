@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
+import logo from "@/assets/logo.png";
 
 const Footer = () => (
   <footer className="bg-foreground text-background">
     <div className="container mx-auto px-4 py-16">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         <div>
-          <h3 className="text-xl font-display font-bold mb-4">Smart Power Energy</h3>
+          <img src={logo} alt="Smart Power Energy" className="h-14 w-auto mb-4 brightness-0 invert" />
           <p className="text-background/70 text-sm leading-relaxed">
             Reliable solar solutions for homes and businesses across India. Save electricity, save money, go solar today.
           </p>
