@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.png";
 
+import { useSiteData } from "@/contexts/SiteContext";
+
 const navLinks = [
   { label: "Home", path: "/" },
   { label: "Shop", path: "/shop" },
@@ -12,9 +14,13 @@ const navLinks = [
 ];
 
 const Header = () => {
+  const { globalSettings } = useSiteData();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+
+  const phone = globalSettings?.phone || "7004729460";
+  const whatsapp = phone.replace(/\D/g, "");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -51,7 +57,7 @@ const Header = () => {
             </Link>
           ))}
           <a
-            href="https://wa.me/917004729460"
+            href={`https://wa.me/${whatsapp.startsWith('91') ? whatsapp : '91' + whatsapp}`}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-primary text-primary-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
@@ -91,7 +97,7 @@ const Header = () => {
                 </Link>
               ))}
               <a
-                href="https://wa.me/917004729460"
+                href={`https://wa.me/${whatsapp.startsWith('91') ? whatsapp : '91' + whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-center font-semibold"

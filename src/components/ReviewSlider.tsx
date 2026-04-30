@@ -10,18 +10,21 @@ const StarRating = ({ rating }: { rating: number }) => (
   </div>
 );
 
-const ReviewSlider = () => {
+const ReviewSlider = ({ customReviews }: { customReviews?: any[] }) => {
+  const displayReviews = customReviews?.length > 0 ? customReviews : reviews;
   const [current, setCurrent] = useState(0);
   const interval = useRef<ReturnType<typeof setInterval>>();
 
   useEffect(() => {
     interval.current = setInterval(() => {
-      setCurrent((c) => (c + 2 >= reviews.length ? 0 : c + 2));
+      setCurrent((c) => (c + 2 >= displayReviews.length ? 0 : c + 2));
     }, 4000);
     return () => clearInterval(interval.current);
-  }, []);
+  }, [displayReviews.length]);
 
-  const visible = reviews.slice(current, current + 2);
+  const visible = displayReviews.slice(current, current + 2);
+
+  if (displayReviews.length === 0) return null;
 
   return (
     <section className="py-20 bg-gradient-to-br from-primary/10 via-accent/5 to-secondary/20 relative overflow-hidden">
@@ -44,14 +47,14 @@ const ReviewSlider = () => {
                 <p className="text-foreground/80 mb-6 leading-relaxed italic">"{r.text}"</p>
                 <div>
                   <p className="font-semibold">{r.name}</p>
-                  <p className="text-sm text-muted-foreground">{r.city}</p>
+                  <p className="text-sm text-muted-foreground">{r.city || 'Verified Customer'}</p>
                 </div>
               </motion.div>
             ))}
           </AnimatePresence>
         </div>
         <div className="flex justify-center gap-2 mt-8">
-          {Array.from({ length: Math.ceil(reviews.length / 2) }).map((_, i) => (
+          {Array.from({ length: Math.ceil(displayReviews.length / 2) }).map((_, i) => (
             <button key={i} onClick={() => setCurrent(i * 2)}
               className={`w-2.5 h-2.5 rounded-full transition-colors ${current === i * 2 ? "bg-primary" : "bg-primary/20"}`} />
           ))}

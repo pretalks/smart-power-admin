@@ -2,18 +2,21 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { whyChooseUsItems } from "@/data/siteData";
 
-const WhyChooseCarousel = () => {
+const WhyChooseCarousel = ({ customItems }: { customItems?: any[] }) => {
+  const displayItems = customItems?.length > 0 ? customItems : whyChooseUsItems;
   const [current, setCurrent] = useState(0);
   const interval = useRef<ReturnType<typeof setInterval>>();
 
   useEffect(() => {
     interval.current = setInterval(() => {
-      setCurrent((c) => (c + 1) % whyChooseUsItems.length);
+      setCurrent((c) => (c + 1) % displayItems.length);
     }, 3000);
     return () => clearInterval(interval.current);
-  }, []);
+  }, [displayItems.length]);
 
-  const item = whyChooseUsItems[current];
+  const item = displayItems[current];
+
+  if (!item) return null;
 
   return (
     <section className="py-20">
@@ -46,12 +49,12 @@ const WhyChooseCarousel = () => {
               />
               <div className="p-6 text-center">
                 <h3 className="text-xl font-display font-bold mb-2">{item.title}</h3>
-                <p className="text-muted-foreground">{item.desc}</p>
+                <p className="text-muted-foreground">{item.description || item.desc}</p>
               </div>
             </motion.div>
           </AnimatePresence>
           <div className="flex justify-center gap-2 mt-6">
-            {whyChooseUsItems.map((_, i) => (
+            {displayItems.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrent(i)}
