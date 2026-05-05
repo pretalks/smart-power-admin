@@ -38,9 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from 'sonner';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from 'firebase/firestore';
-import { uploadImage } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 
 interface Product {
   id: string;
@@ -73,11 +71,21 @@ const AdminProducts = () => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
-      const querySnapshot = await getDocs(q);
-      const items = querySnapshot.docs.map(doc => ({
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const items = (data || []).map((doc: any) => ({
         id: doc.id,
-        ...doc.data()
+        title: doc.name || doc.title,
+        description: doc.description,
+        category: doc.category,
+        showOnHomepage: doc.show_on_homepage || doc.showOnHomepage,
+        image: doc.image,
+        createdAt: doc.created_at || doc.createdAt
       })) as Product[];
       setProducts(items);
     } catch (error) {
@@ -124,28 +132,73 @@ const AdminProducts = () => {
 
     try {
       let imageUrl = formData.image;
+
       if (imageFile) {
-        imageUrl = await uploadImage(imageFile);
+        // Upload image exactly as requested
+        const fileName = `${Date.now()}-${imageFile.name}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("products")
+          .upload(fileName, imageFile);
+
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data } = supabase.storage
+          .from("products")
+          .getPublicUrl(fileName);
+
+        imageUrl = data.publicUrl;
       }
 
-      const dataToSave = { ...formData, image: imageUrl };
+      if (!imageUrl && !editingProduct) {
+        alert("Image required");
+        setSaving(false);
+        return;
+      }
 
       if (editingProduct) {
-        const docRef = doc(db, 'products', editingProduct.id);
-        await updateDoc(docRef, dataToSave);
-        toast.success('Product updated successfully!');
+        const { error } = await supabase
+          .from("products")
+          .update({
+            name: formData.title,
+            description: formData.description,
+            category: formData.category,
+            image: imageUrl,
+            show_on_homepage: formData.showOnHomepage || false
+          })
+          .eq('id', editingProduct.id)
+          .select();
+
+        if (error) throw error;
+        
+        alert("Saved successfully");
       } else {
-        await addDoc(collection(db, 'products'), {
-          ...dataToSave,
-          createdAt: serverTimestamp()
-        });
-        toast.success('Product added successfully!');
+        // Insert into DB (IMPORTANT FIX)
+        const { error } = await supabase
+          .from("products")
+          .insert([
+            {
+              name: formData.title,
+              description: formData.description,
+              category: formData.category,
+              image: imageUrl,
+              show_on_homepage: false,
+              created_at: new Date().toISOString(),
+            },
+          ])
+          .select(); // force response
+
+        if (error) throw error;
+
+        alert("Saved successfully");
       }
+
       setIsDialogOpen(false);
       fetchProducts();
-    } catch (error) {
-      console.error("Error saving product:", error);
-      toast.error("Failed to save product");
+    } catch (error: any) {
+      console.error("SAVE ERROR:", error);
+      alert(error.message);
     } finally {
       setSaving(false);
     }
@@ -154,10 +207,15 @@ const AdminProducts = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        await deleteDoc(doc(db, 'products', id));
+        const { error } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', id);
+
+        if (error) throw error;
         toast.success('Product deleted successfully');
         fetchProducts();
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error deleting product:", error);
         toast.error("Failed to delete product");
       }
