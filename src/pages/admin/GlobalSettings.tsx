@@ -8,6 +8,7 @@ import { Save, Upload, Trash2, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { uploadImage } from '@/lib/supabase';
 
 const GlobalSettings = () => {
   const [settings, setSettings] = useState({
@@ -18,6 +19,7 @@ const GlobalSettings = () => {
     bannerImage: null as string | null
   });
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -44,8 +46,17 @@ const GlobalSettings = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      await setDoc(doc(db, 'globalSettings', 'main'), settings);
+      let imageUrl = settings.bannerImage;
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+      
+      const dataToSave = { ...settings, bannerImage: imageUrl };
+      
+      await setDoc(doc(db, 'globalSettings', 'main'), dataToSave);
       toast.success('Global settings saved successfully!');
+      setSettings(dataToSave);
+      setImageFile(null);
     } catch (error) {
       console.error("Error saving settings:", error);
       toast.error("Failed to save settings");
@@ -59,12 +70,7 @@ const GlobalSettings = () => {
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setPreviewImage(objectUrl);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSettings({ ...settings, bannerImage: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+      setImageFile(file);
     }
   };
 
@@ -161,6 +167,7 @@ const GlobalSettings = () => {
                           onClick={() => {
                             setSettings({ ...settings, bannerImage: null });
                             setPreviewImage(null);
+                            setImageFile(null);
                           }}
                         >
                           <Trash2 className="h-4 w-4" />

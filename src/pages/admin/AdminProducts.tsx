@@ -40,6 +40,7 @@ import {
 import { toast } from 'sonner';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { uploadImage } from '@/lib/supabase';
 
 interface Product {
   id: string;
@@ -59,6 +60,7 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   
   const [formData, setFormData] = useState<Omit<Product, 'id'>>({
     title: '',
@@ -112,6 +114,7 @@ const AdminProducts = () => {
       });
       setPreviewImage(null);
     }
+    setImageFile(null);
     setIsDialogOpen(true);
   };
 
@@ -120,13 +123,20 @@ const AdminProducts = () => {
     setSaving(true);
 
     try {
+      let imageUrl = formData.image;
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+
+      const dataToSave = { ...formData, image: imageUrl };
+
       if (editingProduct) {
         const docRef = doc(db, 'products', editingProduct.id);
-        await updateDoc(docRef, { ...formData });
+        await updateDoc(docRef, dataToSave);
         toast.success('Product updated successfully!');
       } else {
         await addDoc(collection(db, 'products'), {
-          ...formData,
+          ...dataToSave,
           createdAt: serverTimestamp()
         });
         toast.success('Product added successfully!');
@@ -159,12 +169,7 @@ const AdminProducts = () => {
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setPreviewImage(objectUrl);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, image: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+      setImageFile(file);
     }
   };
 
@@ -345,6 +350,7 @@ const AdminProducts = () => {
                         onClick={() => {
                           setFormData({ ...formData, image: null });
                           setPreviewImage(null);
+                          setImageFile(null);
                         }}
                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600"
                       >

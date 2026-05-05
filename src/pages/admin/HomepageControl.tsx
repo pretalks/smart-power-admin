@@ -15,18 +15,21 @@ import {
 import { toast } from 'sonner';
 import { db } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { uploadImage } from '@/lib/supabase';
 
 interface WhyChooseItem {
   id: string;
   title: string;
   description: string;
   image: string | null;
+  imageFile?: File;
 }
 
 interface ServiceItem {
   id: string;
   title: string;
   image: string | null;
+  imageFile?: File;
 }
 
 const HomepageControl = () => {
@@ -58,10 +61,33 @@ const HomepageControl = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
+      const finalWhyChoose = await Promise.all(whyChooseItems.map(async (item) => {
+        if (item.imageFile) {
+          const url = await uploadImage(item.imageFile);
+          const { imageFile, ...rest } = item;
+          return { ...rest, image: url };
+        }
+        const { imageFile, ...rest } = item;
+        return rest;
+      }));
+
+      const finalServices = await Promise.all(serviceItems.map(async (item) => {
+        if (item.imageFile) {
+          const url = await uploadImage(item.imageFile);
+          const { imageFile, ...rest } = item;
+          return { ...rest, image: url };
+        }
+        const { imageFile, ...rest } = item;
+        return rest;
+      }));
+
       await setDoc(doc(db, 'homepageSections', 'main'), {
-        whyChooseItems,
-        serviceItems
+        whyChooseItems: finalWhyChoose,
+        serviceItems: finalServices
       });
+      
+      setWhyChooseItems(finalWhyChoose);
+      setServiceItems(finalServices);
       toast.success('Homepage content saved successfully!');
     } catch (error) {
       console.error("Error saving homepage content:", error);
@@ -82,23 +108,17 @@ const HomepageControl = () => {
   };
 
   const handleWhyChooseImage = (id: string, file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setWhyChooseItems(whyChooseItems.map(item => 
-        item.id === id ? { ...item, image: reader.result as string } : item
-      ));
-    };
-    reader.readAsDataURL(file);
+    const objectUrl = URL.createObjectURL(file);
+    setWhyChooseItems(whyChooseItems.map(item => 
+      item.id === id ? { ...item, image: objectUrl, imageFile: file } : item
+    ));
   };
 
   const handleServiceImage = (id: string, file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setServiceItems(serviceItems.map(item => 
-        item.id === id ? { ...item, image: reader.result as string } : item
-      ));
-    };
-    reader.readAsDataURL(file);
+    const objectUrl = URL.createObjectURL(file);
+    setServiceItems(serviceItems.map(item => 
+      item.id === id ? { ...item, image: objectUrl, imageFile: file } : item
+    ));
   };
 
   if (loading) {

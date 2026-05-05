@@ -31,6 +31,7 @@ import {
 import { toast } from 'sonner';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { uploadImage } from '@/lib/supabase';
 
 interface SubsidyState {
   id: string;
@@ -50,6 +51,7 @@ const SubsidyStates = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   
   const [formData, setFormData] = useState<Omit<SubsidyState, 'id'>>({
     name: '',
@@ -103,6 +105,7 @@ const SubsidyStates = () => {
       });
       setPreviewImage(null);
     }
+    setImageFile(null);
     setIsDialogOpen(true);
   };
 
@@ -111,12 +114,19 @@ const SubsidyStates = () => {
     setSaving(true);
 
     try {
+      let imageUrl = formData.image;
+      if (imageFile) {
+        imageUrl = await uploadImage(imageFile);
+      }
+
+      const dataToSave = { ...formData, image: imageUrl };
+
       if (editingState) {
-        await updateDoc(doc(db, 'subsidyStates', editingState.id), { ...formData });
+        await updateDoc(doc(db, 'subsidyStates', editingState.id), dataToSave);
         toast.success('State info updated successfully!');
       } else {
         await addDoc(collection(db, 'subsidyStates'), {
-          ...formData,
+          ...dataToSave,
           createdAt: serverTimestamp()
         });
         toast.success('State info added successfully!');
@@ -149,11 +159,7 @@ const SubsidyStates = () => {
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setPreviewImage(objectUrl);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, image: reader.result as string });
-      };
-      reader.readAsDataURL(file);
+      setImageFile(file);
     }
   };
 
@@ -272,7 +278,7 @@ const SubsidyStates = () => {
                   {previewImage ? (
                     <div className="relative inline-block w-full">
                       <img src={previewImage} alt="Preview" className="h-32 w-full object-cover rounded-lg" />
-                      <button type="button" onClick={() => { setFormData({ ...formData, image: null }); setPreviewImage(null); }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600">
+                      <button type="button" onClick={() => { setFormData({ ...formData, image: null }); setPreviewImage(null); setImageFile(null); }} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-lg hover:bg-red-600">
                         <X className="h-3 w-3" />
                       </button>
                     </div>
